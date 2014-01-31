@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -76,11 +77,8 @@ public class WBAuthCodeActivity extends Activity {
     private static final int MSG_FETCH_TOKEN_FAILED  = 2;
     
     /** UI 元素列表 */
-    private TextView mNote;
-    private TextView mCodeText;
-    private TextView mTokenText;
-    private Button mCodeButton;
     private Button mAuthCodeButton;
+    private Dialog dialog;
     
     /** 微博 Web 授权接口类，提供登陆等功能  */
     private WeiboAuth mWeiboAuth;
@@ -97,25 +95,21 @@ public class WBAuthCodeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth_code);
         
+        
+//        View digView = View.inflate(this, R.layout.authorize_dialog, null);
+//		dialog = new Dialog(this, R.style.auth_dialog);
+//		dialog.setContentView(digView);
+//	    dialog.show();
+        
         // 初始化控件
-        mNote = (TextView) findViewById(R.id.note);
-        mNote.setMovementMethod(LinkMovementMethod.getInstance());
-        mCodeText = (TextView) findViewById(R.id.code_text);
-        mTokenText = (TextView) findViewById(R.id.token_text);
-        mCodeButton = (Button) findViewById(R.id.code);
         mAuthCodeButton = (Button) findViewById(R.id.auth_code);
         mAuthCodeButton.setEnabled(false);
 
         // 初始化微博对象
         mWeiboAuth = new WeiboAuth(this, Constants.APP_KEY, Constants.REDIRECT_URL, Constants.SCOPE);
-
-        // 第一步：获取 Code
-        mCodeButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mWeiboAuth.authorize(new AuthListener(), WeiboAuth.OBTAIN_AUTH_CODE);
-            }
-        });
+        
+        //第一步：跳转到web页面进行授权，获取 Code
+        mWeiboAuth.authorize(new AuthListener(), WeiboAuth.OBTAIN_AUTH_CODE);
         
         // 第二步：通过 Code 获取 Token
         mAuthCodeButton.setOnClickListener(new OnClickListener() {
@@ -147,10 +141,8 @@ public class WBAuthCodeActivity extends Activity {
             }
             
             mCode = code;
-            mCodeText.setText(code);
+            System.out.println("请求到的code："+code);
             mAuthCodeButton.setEnabled(true);
-            mTokenText.setText("");
-            Toast.makeText(WBAuthCodeActivity.this, "获取 Code 成功", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -176,8 +168,7 @@ public class WBAuthCodeActivity extends Activity {
                 // 显示 Token
                 String date = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(
                         new java.util.Date(mAccessToken.getExpiresTime()));
-                String format = "";
-                mTokenText.setText(String.format(format, mAccessToken.getToken(), date));
+                System.out.println("授权时间："+date);
                 mAuthCodeButton.setEnabled(false);
                 
                 Toast.makeText(WBAuthCodeActivity.this, 
@@ -234,6 +225,8 @@ public class WBAuthCodeActivity extends Activity {
                     LogUtil.d(TAG, "Success! " + token.toString());
                     
                     mAccessToken = token;
+                    String accessToken =  token.getToken();
+                    System.out.println("获取到的accessToken:"+accessToken);
                     mHandler.obtainMessage(MSG_FETCH_TOKEN_SUCCESS).sendToTarget();
                 } else {
                     LogUtil.d(TAG, "Failed to receive access token");
