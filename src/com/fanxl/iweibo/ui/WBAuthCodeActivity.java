@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -77,7 +78,6 @@ public class WBAuthCodeActivity extends Activity {
     private static final int MSG_FETCH_TOKEN_FAILED  = 2;
     
     /** UI 元素列表 */
-    private Button mAuthCodeButton;
     private Dialog dialog;
     
     /** 微博 Web 授权接口类，提供登陆等功能  */
@@ -96,28 +96,37 @@ public class WBAuthCodeActivity extends Activity {
         setContentView(R.layout.activity_auth_code);
         
         
-//        View digView = View.inflate(this, R.layout.authorize_dialog, null);
-//		dialog = new Dialog(this, R.style.auth_dialog);
-//		dialog.setContentView(digView);
-//	    dialog.show();
+        View digView = View.inflate(this, R.layout.authweiboo_dialog, null);
+		dialog = new Dialog(this, R.style.auth_dialog);
+		dialog.setContentView(digView);
+		dialog.setCancelable(false);//设置对话框点击其他部分不会消失
+	    dialog.show();
         
         // 初始化控件
-        mAuthCodeButton = (Button) findViewById(R.id.auth_code);
-        mAuthCodeButton.setEnabled(false);
+	    Button bt_dialog_false = (Button) digView.findViewById(R.id.bt_dialog_false);
+	    bt_dialog_false.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			    finish();
+				startActivity(new Intent(WBAuthCodeActivity.this, AuthActivity.class));
+			}
+		});
+	    Button bt_dialog_true = (Button) digView.findViewById(R.id.bt_dialog_true);
+	    // 第二步：通过 Code 获取 Token
+	    bt_dialog_true.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fetchTokenAsync(mCode, WEIBO_DEMO_APP_SECRET);
+            }
+        });
 
         // 初始化微博对象
         mWeiboAuth = new WeiboAuth(this, Constants.APP_KEY, Constants.REDIRECT_URL, Constants.SCOPE);
         
         //第一步：跳转到web页面进行授权，获取 Code
         mWeiboAuth.authorize(new AuthListener(), WeiboAuth.OBTAIN_AUTH_CODE);
-        
-        // 第二步：通过 Code 获取 Token
-        mAuthCodeButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fetchTokenAsync(mCode, WEIBO_DEMO_APP_SECRET);
-            }
-        });
+
     }
 
     /**
@@ -142,7 +151,7 @@ public class WBAuthCodeActivity extends Activity {
             
             mCode = code;
             System.out.println("请求到的code："+code);
-            mAuthCodeButton.setEnabled(true);
+            //mAuthCodeButton.setEnabled(true);
         }
 
         @Override
@@ -169,7 +178,7 @@ public class WBAuthCodeActivity extends Activity {
                 String date = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(
                         new java.util.Date(mAccessToken.getExpiresTime()));
                 System.out.println("授权时间："+date);
-                mAuthCodeButton.setEnabled(false);
+                //mAuthCodeButton.setEnabled(false);
                 
                 Toast.makeText(WBAuthCodeActivity.this, 
                         R.string.weibosdk_demo_toast_obtain_token_success, Toast.LENGTH_SHORT).show();
