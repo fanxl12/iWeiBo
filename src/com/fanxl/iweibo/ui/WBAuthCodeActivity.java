@@ -35,7 +35,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fanxl.iweibo.R;
+import com.fanxl.iweibo.bean.UserInfo;
 import com.fanxl.iweibo.demo.Constants;
+import com.fanxl.iweibo.services.UserInfoServices;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuth;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
@@ -86,6 +88,10 @@ public class WBAuthCodeActivity extends Activity {
     private String mCode;
     /** 获取到的 Token */
     private Oauth2AccessToken mAccessToken;
+    
+    /** 保存用户信息*/
+    private UserInfoServices userInfoServices;
+    
 
     /**
      * @see {@link Activity#onCreate}
@@ -112,6 +118,7 @@ public class WBAuthCodeActivity extends Activity {
 				startActivity(new Intent(WBAuthCodeActivity.this, AuthActivity.class));
 			}
 		});
+	    
 	    Button bt_dialog_true = (Button) digView.findViewById(R.id.bt_dialog_true);
 	    // 第二步：通过 Code 获取 Token
 	    bt_dialog_true.setOnClickListener(new OnClickListener() {
@@ -150,6 +157,7 @@ public class WBAuthCodeActivity extends Activity {
             }
             
             mCode = code;
+            userInfoServices = new UserInfoServices(WBAuthCodeActivity.this);
             System.out.println("请求到的code："+code);
             //mAuthCodeButton.setEnabled(true);
         }
@@ -233,9 +241,11 @@ public class WBAuthCodeActivity extends Activity {
                 if (token != null && token.isSessionValid()) {
                     LogUtil.d(TAG, "Success! " + token.toString());
                     
+                    //保存认证得到的用户认证信息到数据库
+                    UserInfo user = new UserInfo(token.getUid(), "userName", token.getToken(), "1");
+                    userInfoServices.insertUserInfo(user);
+                    
                     mAccessToken = token;
-                    String accessToken =  token.getToken();
-                    System.out.println("获取到的accessToken:"+accessToken);
                     mHandler.obtainMessage(MSG_FETCH_TOKEN_SUCCESS).sendToTarget();
                 } else {
                     LogUtil.d(TAG, "Failed to receive access token");

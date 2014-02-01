@@ -21,7 +21,7 @@ public class AuthActivity extends Activity {
 		View digView = View.inflate(this, R.layout.authorize_dialog, null);
 		dialog = new Dialog(this, R.style.auth_dialog);
 		dialog.setContentView(digView);
-		dialog.setCancelable(false);
+		dialog.setCanceledOnTouchOutside(false);
 	    dialog.show();
 	    Button bt_dialog_login = (Button) digView.findViewById(R.id.bt_dialog_login);
 	    bt_dialog_login.setOnClickListener(new OnClickListener() {
