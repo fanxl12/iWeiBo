@@ -98,6 +98,7 @@ public class UserInfoServices {
 				UserInfo.USER_ID, UserInfo.USER_NAME, UserInfo.ACCESS_TOKEN,
 				UserInfo.IS_DEFAULT, UserInfo.USER_ICON }, null, null, null,
 				null, null);
+		System.out.println("count>>>>>>"+cursor.getCount());
 		if(null != cursor && cursor.getCount()>0){
 			users = new ArrayList<UserInfo>(cursor.getCount());
 			UserInfo userInfo = null;
@@ -112,6 +113,7 @@ public class UserInfoServices {
 						.getColumnIndex(UserInfo.USER_NAME));
 				String access_Token = cursor.getString(cursor
 						.getColumnIndex(UserInfo.ACCESS_TOKEN));
+				System.out.println("token>>>>>>"+access_Token);
 				String is_Default = cursor.getString(cursor
 						.getColumnIndex(UserInfo.IS_DEFAULT));
                 byte[] byteIcon = cursor.getBlob(cursor.getColumnIndex(UserInfo.USER_ICON));

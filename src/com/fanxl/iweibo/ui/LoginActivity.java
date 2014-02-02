@@ -3,6 +3,7 @@ package com.fanxl.iweibo.ui;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ListView;
 
 import com.fanxl.iweibo.R;
 import com.fanxl.iweibo.bean.Task;
@@ -22,7 +24,9 @@ public class LoginActivity extends Activity implements IWeiBoActivity{
 	
 	private Button bt_login_login;
 	private UserInfoServices services;
-	private List<UserInfo> users;
+	private List<UserInfo> users=null;
+	
+	private Button bt_login_selected;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,11 @@ public class LoginActivity extends Activity implements IWeiBoActivity{
 		Intent service = new Intent(this, MainService.class);
 	    startService(service);
 	    
+	    //把自己放到Activity集合里面去
+	    MainService.addActivity(this);
+	    
+	    init();
+	    
 	    bt_login_login = (Button) findViewById(R.id.bt_login_login);
 	    bt_login_login.setOnClickListener(new OnClickListener() {
 			
@@ -47,19 +56,36 @@ public class LoginActivity extends Activity implements IWeiBoActivity{
 			}
 		});
 	    
-	    //把自己放到Activity集合里面去
-	    MainService.addActivity(this);
+	   
 	}
 
 	@Override
 	public void init() {
+		
 		services = new UserInfoServices(this);
 		users = services.findAllUser();
-		if(null == users && users.isEmpty()){
+		if(null == users){  //查查为什么users.isEmpty()会提示空指针异常
+			System.out.println("ceshi2");
 			startActivity(new Intent(LoginActivity.this, AuthActivity.class));
 			finish();
 		}else{
+			
 			//选择已经认证成功的用户
+			bt_login_selected = (Button) findViewById(R.id.bt_login_selected);
+			bt_login_selected.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					View dlgView = View.inflate(LoginActivity.this, R.layout.user_selected_dialog, null);
+					Dialog dialog = new Dialog(LoginActivity.this, R.style.user_selected_dialog);
+					dialog.setContentView(dlgView);
+					dialog.show();
+					
+					ListView listView = (ListView) dlgView.findViewById(R.id.lv_selected_list);
+				
+				
+				}
+			});
 		}
 	}
 

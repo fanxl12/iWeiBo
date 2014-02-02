@@ -4,51 +4,64 @@
     android:layout_height="fill_parent"
     android:background="@drawable/main_bg"
     android:orientation="vertical" >
-    
-    <Button 
+
+    <Button
         android:id="@+id/bt_login_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/add_login_add"
         android:layout_gravity="right"
-        android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
-        />
-    
-    <LinearLayout 
-        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/add_login_add" />
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/head_bg"
+        android:layout_gravity="center"
         android:layout_marginTop="20dp"
+        android:background="@drawable/head_bg"
         android:gravity="center"
-        android:layout_gravity="center">
-        
+        android:orientation="vertical" >
+
         <ImageView
-            android:id="@+id/iv_login_userhead" 
+            android:id="@+id/iv_login_userhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/user_head"/>
+            android:src="@drawable/user_head" />
     </LinearLayout>
-    
-    <Spinner 
-        android:id="@+id/sp_login_userlist"
+
+    <LinearLayout
         android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/account_selete_bg"/>
-    
-    <Button 
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/tv_login_text"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:background="@drawable/input"
+            android:editable="false"
+            android:enabled="false" />
+
+        <Button
+            android:id="@+id/bt_login_selected"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@drawable/login_selected" />
+    </LinearLayout>
+
+    <Button
         android:id="@+id/bt_login_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/login_bg"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:textColor="@color/white"
-        android:textSize="20sp"
+        android:background="@drawable/login_bg"
         android:text="@string/login"
-        />
+        android:textColor="@color/white"
+        android:textSize="20sp" />
 
 </LinearLayout>
